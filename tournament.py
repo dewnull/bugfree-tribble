@@ -16,41 +16,46 @@ def deleteMatches():
 	"""Remove all the match records from the database."""
 	DB = connect()
 	c = DB.cursor()
-	c.execute("DELETE * FROM matches")
+	c.execute("DELETE FROM matches")
 	DB.close()
 
 def deletePlayers():
 	"""Remove all the player records from the database."""
 	DB = connect()
 	c = DB.cursor()
-	c.execute("DELTE * FROM players")
+	c.execute("DELETE FROM players")
 	DB.close()
 
 def countPlayers():
-	"""Returns the number of players currently registered."""
-	DB = connect()
-	c = DB.cursor()
-	c.execute("SELECT COUNT(*) FROM players")
-	DB.close()
+  """Returns the number of players currently registered."""
+  DB = connect()
+  c = DB.cursor()
+  c.execute("SELECT COUNT(*) FROM players")
+  result = c.fetchone()[0]
+  DB.close()
+  return result
 
 def registerPlayer(name):
 	"""Adds a player to the tournament database.
 	
 	The database assigns a unique serial id number for the player.  (This
 	should be handled by your SQL database schema, not in your Python code.)
-  
+
   Args:
   	name: the player's full name (need not be unique).
 	"""
-	name = blech.clean(name)
+	new_name = bleach.clean(name)
 	try:
 		DB = connect()
-		c = DB.cursor()
-		c.execute("INSERT INTO players (name) VALUES (%s)", (name,))
+  except:
+    print "Unable to connect"
+  try:
+    c = DB.cursor()
+		c.execute("INSERT INTO players (name) VALUES ('%s');" % (new_name,))
 		c.commit()
 		c.close()
 	except:
-		print "Unable to register player"
+		print "Unable to register player INSERT INTO players (name) VALUES ('%s')" % (new_name,)
 
 def playerStandings():
 	"""Returns a list of the players and their win records, sorted by wins.
@@ -84,8 +89,8 @@ def reportMatch(winner, loser):
 		winner:  the id number of the player who won
 		loser:  the id number of the player who lost
 	"""
-	winner = blech.clean(winner)
-	loser  = blech.clean(loser)
+	winner = bleach.clean(winner)
+	loser  = bleach.clean(loser)
 	try:
 		DB = connect()
 		c = DB.cursor()
