@@ -48,7 +48,7 @@ def registerPlayer(name):
 	try:
 		DB = connect()
 	except:
-    	print "Unable to connect"
+		print "Unable to connect"
   	try:
     	c = DB.cursor()
 		c.execute("INSERT INTO players (name) VALUES ('%s');" % (new_name,))
