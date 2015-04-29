@@ -27,13 +27,13 @@ def deletePlayers():
 	DB.close()
 
 def countPlayers():
-  """Returns the number of players currently registered."""
-  DB = connect()
-  c = DB.cursor()
-  c.execute("SELECT COUNT(*) FROM players")
-  result = c.fetchone()[0]
-  DB.close()
-  return result
+	"""Returns the number of players currently registered."""
+	DB = connect()
+	c = DB.cursor()
+	c.execute("SELECT COUNT(*) FROM players")
+	result = c.fetchone()[0]
+	DB.close()
+	return result
 
 def registerPlayer(name):
 	"""Adds a player to the tournament database.
@@ -41,16 +41,16 @@ def registerPlayer(name):
 	The database assigns a unique serial id number for the player.  (This
 	should be handled by your SQL database schema, not in your Python code.)
 
-  Args:
-  	name: the player's full name (need not be unique).
+ 	Args:
+  		name: the player's full name (need not be unique).
 	"""
 	new_name = bleach.clean(name)
 	try:
 		DB = connect()
-  except:
-    print "Unable to connect"
-  try:
-    c = DB.cursor()
+	except:
+    	print "Unable to connect"
+  	try:
+    	c = DB.cursor()
 		c.execute("INSERT INTO players (name) VALUES ('%s');" % (new_name,))
 		c.commit()
 		c.close()
