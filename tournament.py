@@ -10,8 +10,9 @@ import bleach
 def connect():
 	"""Connect to the PostgreSQL database.  Returns a database connection."""
 	return psycopg2.connect("host='opensystems.crbp7d2xdj5m.us-east-1.rds.amazonaws.com' dbname='tournament' user='jharvard' password='crimson'")
-
-
+#	if you like to connect to a local database, replace the line above with
+#	retunr psycopg2.connect("dbname=tournament")
+	
 def deleteMatches():
 	"""Remove all the match records from the database."""
 	DB = connect()
