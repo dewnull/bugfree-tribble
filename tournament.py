@@ -50,15 +50,13 @@ def registerPlayer(name):
 	name = bleach.clean(name)
 	try:
 		DB = connect()
+		c = DB.cursor()
+		c.execute("INSERT INTO players (name) VALUES (%s);", (name,))
+		DB.commit()
+		c.close()
 	except:
-		print "Unable to connect"
-	c = DB.cursor()
-	c.execute("INSERT INTO players (name) VALUES (%s);", (name,))
-	DB.commit()
-	c.close()
-	""" except:
 		print "Unable to register player: INSERT INTO players (name) VALUES ('%s')" % (new_name,)
-	"""
+		
 def playerStandings():
 	"""Returns a list of the players and their win records, sorted by wins.
 	
