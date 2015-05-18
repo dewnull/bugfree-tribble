@@ -10,8 +10,9 @@ import bleach
 def connect():
 	"""Connect to the PostgreSQL database.  Returns a database connection."""
 	return psycopg2.connect("host='opensystems.crbp7d2xdj5m.us-east-1.rds.amazonaws.com' dbname='tournament' user='jharvard' password='crimson'")
-
-
+#	if you like to connect to a local database, replace the line above with
+#	retunr psycopg2.connect("dbname=tournament")
+	
 def deleteMatches():
 	"""Remove all the match records from the database."""
 	DB = connect()
@@ -49,15 +50,13 @@ def registerPlayer(name):
 	name = bleach.clean(name)
 	try:
 		DB = connect()
+		c = DB.cursor()
+		c.execute("INSERT INTO players (name) VALUES (%s);", (name,))
+		DB.commit()
+		c.close()
 	except:
-		print "Unable to connect"
-	c = DB.cursor()
-	c.execute("INSERT INTO players (name) VALUES (%s);", (name,))
-	DB.commit()
-	c.close()
-	""" except:
 		print "Unable to register player: INSERT INTO players (name) VALUES ('%s')" % (new_name,)
-	"""
+		
 def playerStandings():
 	"""Returns a list of the players and their win records, sorted by wins.
 	
