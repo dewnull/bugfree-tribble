@@ -8,13 +8,11 @@
 
 
 CREATE TABLE tournoments (id SERIAL PRIMARY KEY, match_id INTEGER); 
-CREATE TABLE players (id SERIAL PRIMARY KEY, name as VARCHAR(150));
+CREATE TABLE players (id SERIAL PRIMARY KEY, name VARCHAR(150));
 CREATE TABLE matches (id SERIAL PRIMARY KEY, 
-					  player1 INTEGER, 
-					  player2 INTEGER, 
 					  winner INTEGER,
 					  loser INTEGER,
 					 FOREIGN KEY(winner) REFERENCES players(id),
 					 FOREIGN KEY(loser) REFERENCES players(id) );
-CREATE VIEW standing AS SELECT id, name (SELECT COUNT(*) FROM matches WHERE id = winner) AS wins,
-(SELECT COUNT(*) FROM matches WHERE id IN (winner, loser)) AS matches FROM players GROUP BY id;
+CREATE VIEW standing AS SELECT id, name, (SELECT COUNT(*) FROM matches WHERE players.id = matches.winner) AS wins,
+(SELECT COUNT(*) FROM matches WHERE players.id IN (matches.winner, matches.loser)) AS total_matches FROM players GROUP by id;

@@ -17,6 +17,7 @@ def deleteMatches():
 	DB = connect()
 	c = DB.cursor()
 	c.execute("DELETE FROM matches")
+	DB.commit()
 	DB.close()
 
 def deletePlayers():
@@ -24,6 +25,7 @@ def deletePlayers():
 	DB = connect()
 	c = DB.cursor()
 	c.execute("DELETE FROM players")
+	DB.commit()
 	DB.close()
 
 def countPlayers():
@@ -44,19 +46,18 @@ def registerPlayer(name):
  	Args:
   		name: the player's full name (need not be unique).
 	"""
-	new_name = bleach.clean(name)
+	name = bleach.clean(name)
 	try:
 		DB = connect()
 	except:
 		print "Unable to connect"
-  	try:
-    	c = DB.cursor()
-		c.execute("INSERT INTO players (name) VALUES ('%s');" % (new_name,))
-		c.commit()
-		c.close()
-	except:
-		print "Unable to register player INSERT INTO players (name) VALUES ('%s')" % (new_name,)
-
+	c = DB.cursor()
+	c.execute("INSERT INTO players (name) VALUES (%s);", (name,))
+	DB.commit()
+	c.close()
+	""" except:
+		print "Unable to register player: INSERT INTO players (name) VALUES ('%s')" % (new_name,)
+	"""
 def playerStandings():
 	"""Returns a list of the players and their win records, sorted by wins.
 	
@@ -74,11 +75,11 @@ def playerStandings():
 	try:
 		DB = connect()
 		c = DB.cursor()
-		c.execute("SELECT * FROM standing ORDER BY wins DESC, allmatches ASC")
+		c.execute("SELECT * FROM standing ORDER BY wins DESC, total_matches ASC")
 		result = c.fetchall()
 		c.close()
 	except:
-		print "Unable to register player"
+		print "Unable to report standing"
 		
 	return result
 
@@ -95,7 +96,7 @@ def reportMatch(winner, loser):
 		DB = connect()
 		c = DB.cursor()
 		c.execute("INSERT INTO matches (winner, loser) VALUES (%s, %s)", (winner, loser))
-		c.commit()
+		DB.commit()
 		c.close()
 	except:
 		print "Unable to report a Match"
@@ -115,3 +116,14 @@ def swissPairings():
 		id2: the second player's unique id
 		name2: the second player's name
 	"""
+	standings = playerStandings()
+	number_players = len(standings)
+	pairings = []
+	if number_players % 2 == 0:
+		for player in range(0, number_players, 2):
+			p1 = standings[player]
+			p2 = standings[player + 1]
+			pairings.append([p1[0],p1[1],p2[0],p2[1]])
+	else:
+		print "Odd number of players are not supported"
+	return pairings
